@@ -1,0 +1,47 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  api-server
+  labels:
+    name:  api-server
+spec:
+  selector:
+     matchLabels:    
+      name:  api-server
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        name:  api-server
+    spec:
+      containers:
+      - image:  imedaouidene/elvis
+        name:  api-server
+        resources:
+          requests:
+            cpu: "20m"
+            memory: "55M"
+          limits:
+            cpu: "1"
+            memory: "1024M"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 20
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 20
+          timeoutSeconds: 10
+        ports:
+        - containerPort:  3000
+          name:  web-http
+    
